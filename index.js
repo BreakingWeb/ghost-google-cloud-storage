@@ -1,9 +1,10 @@
 'use strict';
 
-var storage     = require('@google-cloud/storage'),
+var Storage     = require('@google-cloud/storage').Storage,
     BaseStore   = require('ghost-storage-base'),
     path        = require('path'),
     Promise     = require('bluebird'),
+    mime        = require('mime-types'),
     options     = {};
 
 class GStore extends BaseStore {
@@ -11,7 +12,7 @@ class GStore extends BaseStore {
         super(config);
         options = config;
 
-        var gcs = storage({
+        var gcs = new Storage({
             projectId: options.projectId,
             keyFilename: options.key
         });
@@ -36,6 +37,7 @@ class GStore extends BaseStore {
             targetFilename = newFile;
             var opts = {
                 destination: newFile,
+                contentType: 'auto',
                 metadata: {
                     cacheControl: `public, max-age=${this.maxAge}`
                 },
